@@ -1,26 +1,39 @@
-% computes the edgewise ICC on the first N rows of 2 edge x subjects
-% matrices
+% computes the edgewise mean ICC on the first N rows of 2 edge x subjects
+% matrices, with shuffling of the rows for a certain number of permutations
 
-function icc=icc_firstNrows(matrix1, matrix2, rows, shuffle)
+function [meanicc_allfeat sdicc_allfeat meanicc_global sdicc_global meansum_excellent meansum_good meansum_fair sdsum_poor sdsum_excellent sdsum_good sdsum_fair sdsum_poor ]=icc_firstNrows(matrix1, matrix2, rows, shufflenum)
 
+disp(strcat('N=', num2str(rows)))
+
+for perm=1:shufflenum
+    
+disp(strcat('Permutation', {' '}, num2str(perm)))
+shufflevec = randperm(size(matrix1, 1));
+matrix1= matrix1(shufflevec,:);
+matrix2= matrix2(shufflevec,:);
 newmat1=matrix1(1:rows, :);
 newmat2=matrix2(1:rows, :);
 
-if shuffle==1
-    random_x = x(randperm(size(x, 1)), :)
+for feat=1:size(newmat1, 2)
     
+    data=[ newmat1(:,feat) newmat2(:,feat) ];
+    icc(perm, feat) = ICC(data, 'C-1');
+    
+end
 
+end
 
-        for feat=1:size(newmat1, 2)
-            
-            if shuffle==1
-                random_x = x(randperm(size(x, 1)), :)
-            end
-            
-            data=[ newmat1(:,feat) newmat2(:,feat) ];
-            icc(feat) = ICC(data, 'C-1');
-            
-        end
-        
+meanicc_allfeat=mean(icc, 1);
+sdicc_allfeat=std(icc, 1);
+meanicc_global=mean(mean(icc, 1);
+sdicc_global=
+meansum_excellent=
+meansum_good=
+meansum_fair=
+sdsum_poor=
+sdsum_excellent=
+sdsum_good=
+sdsum_fair=
+sdsum_poor=
 
 end
