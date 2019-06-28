@@ -1,0 +1,26 @@
+% computes the edgewise ICC on the first N rows of 2 edge x subjects
+% matrices
+
+function icc=icc_firstNrows(matrix1, matrix2, rows, shuffle)
+
+newmat1=matrix1(1:rows, :);
+newmat2=matrix2(1:rows, :);
+
+if shuffle==1
+    random_x = x(randperm(size(x, 1)), :)
+    
+
+
+        for feat=1:size(newmat1, 2)
+            
+            if shuffle==1
+                random_x = x(randperm(size(x, 1)), :)
+            end
+            
+            data=[ newmat1(:,feat) newmat2(:,feat) ];
+            icc(feat) = ICC(data, 'C-1');
+            
+        end
+        
+
+end
