@@ -17,6 +17,11 @@ for sub=1:length(subs)
     
     disp(strcat('Processing',{' '}, subs{sub}))
     
+    if gsr==1
+        disp('Doing GSR as requested')
+    end
+
+    
     % Check if subject moved too much
     
     try
@@ -91,7 +96,6 @@ for sub=1:length(subs)
         % Consider doing mean grayordinate time series regression (MGTR, https://www.ncbi.nlm.nih.gov/pubmed/27571276)
         
         if gsr==1
-            disp('Doing GSR as requested')
             ts1lr=regressCfdsfromTS(ts1lr', mean(ts1lr, 2))';
             ts1lr=regressCfdsfromTS(ts1lr', mean(ts1rl, 2))';
             ts1lr=regressCfdsfromTS(ts1lr', mean(ts2lr, 2))';
