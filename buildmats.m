@@ -81,7 +81,11 @@ for sub=1:length(subs)
             
         end
         
-        % TODO: Consider doing mean grayordinate time series regression (MGTR, https://www.ncbi.nlm.nih.gov/pubmed/27571276)
+        % Consider doing mean grayordinate time series regression (MGTR, https://www.ncbi.nlm.nih.gov/pubmed/27571276)
+        % ts1lr=regressCfdsfromTS(ts1lr', mean(ts1lr, 2))';
+        % ts1lr=regressCfdsfromTS(ts1lr', mean(ts1rl, 2))';
+        % ts1lr=regressCfdsfromTS(ts1lr', mean(ts2lr, 2))';
+        % ts1lr=regressCfdsfromTS(ts1lr', mean(ts2rl, 2))';
         
         % Filter, keeping high frequencies to not lose degrees of freedom,
         % see:
