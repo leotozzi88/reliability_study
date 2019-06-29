@@ -5,7 +5,13 @@
 
 subs={'101006' '127226' '148335' '159441' '188145' '204016' '285345' '316835' '368551' '926862' '927359' '942658' '160830' '204319' '211619' '406836' '657659' '742549'}
 atlases={'BNT' 'glasser' 'gordon'};
-disc=1
+gsr=0 % flag for grayordinate timeseries regression
+
+motionfolder='/Users/leonardotozzi/Desktop/Server_Leo/HCP_HYA_REST_FIX/MotionInfo';
+inputfolder='/Users/leonardotozzi/Desktop/Server_Leo/HCP_HYA_REST_FIX/ParcellatedData';
+outputfolder='/Users/leonardotozzi/Desktop/Server_Leo/HCP_HYA_REST_FIX/Connmats';
+
+disc=1; % counter for motion information
 
 for sub=1:length(subs)
     
@@ -16,10 +22,10 @@ for sub=1:length(subs)
     try
         
         % Load motion
-        rest1lr_rms=dlmread(strcat('/Users/leonardotozzi/Desktop/Server_Leo/HCP_HYA_REST_FIX/MotionInfo/',subs{sub}, '_rfMRI_REST1_LR_Movement_RelativeRMS.txt'));
-        rest1rl_rms=dlmread(strcat('/Users/leonardotozzi/Desktop/Server_Leo/HCP_HYA_REST_FIX/MotionInfo/',subs{sub}, '_rfMRI_REST1_RL_Movement_RelativeRMS.txt'));
-        rest2lr_rms=dlmread(strcat('/Users/leonardotozzi/Desktop/Server_Leo/HCP_HYA_REST_FIX/MotionInfo/',subs{sub}, '_rfMRI_REST2_RL_Movement_RelativeRMS.txt'));
-        rest2rl_rms=dlmread(strcat('/Users/leonardotozzi/Desktop/Server_Leo/HCP_HYA_REST_FIX/MotionInfo/',subs{sub}, '_rfMRI_REST2_LR_Movement_RelativeRMS.txt'));
+        rest1lr_rms=dlmread(strcat(motionfolder, '/',subs{sub}, '_rfMRI_REST1_LR_Movement_RelativeRMS.txt'));
+        rest1rl_rms=dlmread(strcat(motionfolder, '/',subs{sub}, '_rfMRI_REST1_RL_Movement_RelativeRMS.txt'));
+        rest2lr_rms=dlmread(strcat(motionfolder, '/',subs{sub}, '_rfMRI_REST2_RL_Movement_RelativeRMS.txt'));
+        rest2rl_rms=dlmread(strcat(motionfolder, '/',subs{sub}, '_rfMRI_REST2_LR_Movement_RelativeRMS.txt'));
         
     catch
         
@@ -62,16 +68,16 @@ for sub=1:length(subs)
             
             % Load timeseries
             
-            ts1lr=ciftiopen(strcat('/Users/leonardotozzi/Desktop/Server_Leo/HCP_HYA_REST_FIX/ParcellatedData/', atlases{atlas}, '/', subs{sub}, '_rfMRI_REST1_LR_', atlases{atlas}, '.ptseries.nii'), '/Applications/workbench/bin_macosx64/wb_command');
+            ts1lr=ciftiopen(strcat(inputfolder, '/', atlases{atlas}, '/', subs{sub}, '_rfMRI_REST1_LR_', atlases{atlas}, '.ptseries.nii'), '/Applications/workbench/bin_macosx64/wb_command');
             ts1lr=ts1lr.cdata';
             
-            ts1rl=ciftiopen(strcat('/Users/leonardotozzi/Desktop/Server_Leo/HCP_HYA_REST_FIX/ParcellatedData/', atlases{atlas}, '/', subs{sub}, '_rfMRI_REST1_RL_', atlases{atlas}, '.ptseries.nii'), '/Applications/workbench/bin_macosx64/wb_command');
+            ts1rl=ciftiopen(strcat(inputfolder, '/', atlases{atlas}, '/', subs{sub}, '_rfMRI_REST1_RL_', atlases{atlas}, '.ptseries.nii'), '/Applications/workbench/bin_macosx64/wb_command');
             ts1rl=ts1rl.cdata';
             
-            ts2lr=ciftiopen(strcat('/Users/leonardotozzi/Desktop/Server_Leo/HCP_HYA_REST_FIX/ParcellatedData/', atlases{atlas}, '/', subs{sub}, '_rfMRI_REST2_LR_', atlases{atlas}, '.ptseries.nii'), '/Applications/workbench/bin_macosx64/wb_command');
+            ts2lr=ciftiopen(strcat(inputfolder, '/', atlases{atlas}, '/', subs{sub}, '_rfMRI_REST2_LR_', atlases{atlas}, '.ptseries.nii'), '/Applications/workbench/bin_macosx64/wb_command');
             ts2lr=ts2lr.cdata';
             
-            ts2rl=ciftiopen(strcat('/Users/leonardotozzi/Desktop/Server_Leo/HCP_HYA_REST_FIX/ParcellatedData/', atlases{atlas}, '/', subs{sub}, '_rfMRI_REST2_RL_', atlases{atlas}, '.ptseries.nii'), '/Applications/workbench/bin_macosx64/wb_command');
+            ts2rl=ciftiopen(strcat(inputfolder, '/', atlases{atlas}, '/', subs{sub}, '_rfMRI_REST2_RL_', atlases{atlas}, '.ptseries.nii'), '/Applications/workbench/bin_macosx64/wb_command');
             ts2rl=ts2rl.cdata';
             
         catch
@@ -81,11 +87,15 @@ for sub=1:length(subs)
             
         end
         
+        
         % Consider doing mean grayordinate time series regression (MGTR, https://www.ncbi.nlm.nih.gov/pubmed/27571276)
-        % ts1lr=regressCfdsfromTS(ts1lr', mean(ts1lr, 2))';
-        % ts1lr=regressCfdsfromTS(ts1lr', mean(ts1rl, 2))';
-        % ts1lr=regressCfdsfromTS(ts1lr', mean(ts2lr, 2))';
-        % ts1lr=regressCfdsfromTS(ts1lr', mean(ts2rl, 2))';
+        
+        if gsr==1
+        ts1lr=regressCfdsfromTS(ts1lr', mean(ts1lr, 2))';
+        ts1lr=regressCfdsfromTS(ts1lr', mean(ts1rl, 2))';
+        ts1lr=regressCfdsfromTS(ts1lr', mean(ts2lr, 2))';
+        ts1lr=regressCfdsfromTS(ts1lr', mean(ts2rl, 2))';
+        end
         
         % Filter, keeping high frequencies to not lose degrees of freedom,
         % see:
@@ -120,19 +130,32 @@ for sub=1:length(subs)
         ts1merge_fm_conn=corr(ts1merge_fm);
         ts2merge_fm_conn=corr(ts2merge_fm);
         
+        if gsr==1 % changing naming of output
+        
         % Individual runs
-        csvwrite(strcat('/Users/leonardotozzi/Desktop/Server_Leo/HCP_HYA_REST_FIX/Connmats/', atlases{atlas}, '/', subs{sub}, '_rfMRI_REST1_LR_', atlases{atlas}, '.csv'), ts1lr_fm_conn);
-        csvwrite(strcat('/Users/leonardotozzi/Desktop/Server_Leo/HCP_HYA_REST_FIX/Connmats/', atlases{atlas}, '/', subs{sub}, '_rfMRI_REST1_RL_', atlases{atlas}, '.csv'), ts1rl_fm_conn);
-        csvwrite(strcat('/Users/leonardotozzi/Desktop/Server_Leo/HCP_HYA_REST_FIX/Connmats/', atlases{atlas}, '/', subs{sub}, '_rfMRI_REST2_LR_', atlases{atlas}, '.csv'), ts2lr_fm_conn);
-        csvwrite(strcat('/Users/leonardotozzi/Desktop/Server_Leo/HCP_HYA_REST_FIX/Connmats/', atlases{atlas}, '/', subs{sub}, '_rfMRI_REST2_RL_', atlases{atlas}, '.csv'), ts2rl_fm_conn);
+        csvwrite(strcat(outputfolder, '/', atlases{atlas}, '/', subs{sub}, '_rfMRI_REST1_LR_', atlases{atlas}, '_gsr.csv'), ts1lr_fm_conn);
+        csvwrite(strcat(outputfolder, '/', atlases{atlas}, '/', subs{sub}, '_rfMRI_REST1_RL_', atlases{atlas}, '_gsr.csv'), ts1rl_fm_conn);
+        csvwrite(strcat(outputfolder, '/', atlases{atlas}, '/', subs{sub}, '_rfMRI_REST2_LR_', atlases{atlas}, '_gsr.csv'), ts2lr_fm_conn);
+        csvwrite(strcat(outputfolder, '/', atlases{atlas}, '/', subs{sub}, '_rfMRI_REST2_RL_', atlases{atlas}, '_gsr.csv'), ts2rl_fm_conn);
         
         % Merged runs
-        csvwrite(strcat('/Users/leonardotozzi/Desktop/Server_Leo/HCP_HYA_REST_FIX/Connmats/', atlases{atlas}, '/', subs{sub}, '_rfMRI_REST1_concat_', atlases{atlas}, '.csv'), ts1merge_fm_conn);
-        csvwrite(strcat('/Users/leonardotozzi/Desktop/Server_Leo/HCP_HYA_REST_FIX/Connmats/', atlases{atlas}, '/', subs{sub}, '_rfMRI_REST2_concat_', atlases{atlas}, '.csv'), ts2merge_fm_conn);
+        csvwrite(strcat(outputfolder, '/', atlases{atlas}, '/', subs{sub}, '_rfMRI_REST1_concat_', atlases{atlas}, '_gsr.csv'), ts1merge_fm_conn);
+        csvwrite(strcat(outputfolder, '/', atlases{atlas}, '/', subs{sub}, '_rfMRI_REST2_concat_', atlases{atlas}, '_gsr.csv'), ts2merge_fm_conn);
         
+        else
+            
+        % Individual runs
+        csvwrite(strcat(outputfolder, '/', atlases{atlas}, '/', subs{sub}, '_rfMRI_REST1_LR_', atlases{atlas}, '.csv'), ts1lr_fm_conn);
+        csvwrite(strcat(outputfolder, '/', atlases{atlas}, '/', subs{sub}, '_rfMRI_REST1_RL_', atlases{atlas}, '.csv'), ts1rl_fm_conn);
+        csvwrite(strcat(outputfolder, '/', atlases{atlas}, '/', subs{sub}, '_rfMRI_REST2_LR_', atlases{atlas}, '.csv'), ts2lr_fm_conn);
+        csvwrite(strcat(outputfolder, '/', atlases{atlas}, '/', subs{sub}, '_rfMRI_REST2_RL_', atlases{atlas}, '.csv'), ts2rl_fm_conn);
+        
+        % Merged runs
+        csvwrite(strcat(outputfolder, '/', atlases{atlas}, '/', subs{sub}, '_rfMRI_REST1_concat_', atlases{atlas}, '.csv'), ts1merge_fm_conn);
+        csvwrite(strcat(outputfolder, '/', atlases{atlas}, '/', subs{sub}, '_rfMRI_REST2_concat_', atlases{atlas}, '.csv'), ts2merge_fm_conn);
+
+        end
     end
-    
-    
 end
 
 % Writing information on movement
