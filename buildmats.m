@@ -5,7 +5,7 @@ subs={'100206' '100307' '100408' '100610' '101006' '101309' '101915' '102008' '1
 % subs={'101006' '127226' '148335' '159441' '188145' '204016' '285345' '316835' '368551' '926862' '927359' '942658' '160830' '204319' '211619' '406836' '657659' '742549'};
 
 atlases={'BNT' 'glasser' 'gordon'};
-gsr=1; % flag for grayordinate timeseries regression
+gsr=0; % flag for grayordinate timeseries regression
 
 motionfolder='/Users/leonardotozzi/Desktop/Server_Leo/HCP_HYA_REST_FIX/MotionInfo';
 inputfolder='/Users/leonardotozzi/Desktop/Server_Leo/HCP_HYA_REST_FIX/ParcellatedData';
@@ -20,7 +20,7 @@ for sub=1:length(subs)
     if gsr==1
         disp('Doing GSR as requested')
     end
-
+    
     
     % Check if subject moved too much
     

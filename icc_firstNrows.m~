@@ -2,21 +2,21 @@
 % matrices, with shuffling of the rows for a certain number of permutations
 % and returns information of various means, sds and reliability of edges
 
-function [meanicc_allfeat, sdicc_allfeat, meanicc_global, sdicc_global, meansum_excellent, meansum_good, meansum_fair, meansum_poor, sdsum_excellent, sdsum_good, sdsum_fair, sdsum_poor ]=icc_firstNrows(matrix1, matrix2, rows, shufflenum, replacement)
+function [meanicc_allfeat, sdicc_allfeat, meanicc_global, sdicc_global, meansum_excellent, meansum_good, meansum_fair, meansum_poor, sdsum_excellent, sdsum_good, sdsum_fair, sdsum_poor ]=icc_firstNrows(matrix1, matrix2, rows, shufflenum)
 
 disp(strcat('N=', num2str(rows)))
 icc=nan(shufflenum, rows);
 
 wb=waitbar(0, 'Permutations');
 
+
 for perm=1:shufflenum
     
     waitbar(perm / shufflenum, wb, 'Permutations')
     
-    index = randsample(1:size(matrix1, 1), rows, replacement);
     
-    newmat1 = matrix1(index, :);
-    newmat2 = matrix2(index, :);
+    newmat1 = matrix1(rows);
+    newmat2 = matrix2(matrix2,rows);
     
     for feat=1:size(newmat1, 2)
         
