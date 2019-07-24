@@ -97,9 +97,9 @@ for sub=1:length(subs)
         
         if gsr==1
             ts1lr=regressCfdsfromTS(ts1lr', mean(ts1lr, 2))';
-            ts1lr=regressCfdsfromTS(ts1lr', mean(ts1rl, 2))';
-            ts1lr=regressCfdsfromTS(ts1lr', mean(ts2lr, 2))';
-            ts1lr=regressCfdsfromTS(ts1lr', mean(ts2rl, 2))';
+            ts1rl=regressCfdsfromTS(ts1lr', mean(ts1rl, 2))';
+            ts2lr=regressCfdsfromTS(ts1lr', mean(ts2lr, 2))';
+            ts2rl=regressCfdsfromTS(ts1lr', mean(ts2rl, 2))';
         end
         
         % Filter, keeping high frequencies to not lose degrees of freedom,
