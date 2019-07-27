@@ -14,7 +14,7 @@ gsr=1;
 
 % Input and output folders
 motionfolder='/Users/leonardotozzi/Desktop/Server_Leo/HCP_HYA_REST_FIX/MotionInfo'; % where motion files are
-inputfolder='/Users/leonardotozzi/Desktop/Server_Leo/HCP_HYA_REST_FIX/ParcellatedData'; % where parcellated timeseries are
+inputfolder='/Users/leonardotozzi/Desktop/Server_Leo/HCP_HYA_REST_FIX/ParcellatedData'; % where motion files are
 outputfolder='/Users/leonardotozzi/Desktop/Server_Leo/HCP_HYA_REST_FIX/Connmats'; % where matrices will be saved
 
 % Counter for motion information

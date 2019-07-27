@@ -217,7 +217,7 @@ end
 
 names={'Poor' 'Fair' 'Good' 'Excellent' 'Median'}
 
-figure('Position', [10 10 800 1000])
+figure()
 
 % Brainnetome
 abs_ratiokept_lvl_BNT=csvread(strcat(ICC_outputpath, '/abs_ratiokept_lvl_BNT.csv'));
@@ -293,9 +293,9 @@ Lgnd.Position(2) = 0.4;
 suptitle('Influence of thresholding on consistency of edges retained')
 
 
-%%%%% Plotting effects of thresholding on ICC of consistent edges
+%%%%% Plotting effects of thresholding on ICC
 
-figure('Position', [10 10 800 1000])
+figure('Position', [10 2 900 600])
 
 subplot(3, 2, 1)
 plot(thresholds(1:18), abs_icc_onlycons_lvl_BNT(1:18,1:5), 'LineWidth',2)

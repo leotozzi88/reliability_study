@@ -1,0 +1,71 @@
+% This plots average edgewise FC versus ICC
+
+% BNT
+
+edg1=csvread('/Volumes/LT_storage/Edges/BNT_edgw1.csv');
+edg2=csvread('/Volumes/LT_storage/Edges/BNT_edgw1.csv');
+edg_icc_bnt=csvread('/Users/leonardotozzi/Desktop/Repeatability_study/ICCs/ICC_BNT_edgw1.csv');
+
+fc_bnt=mean((edg1+edg2)/2, 1);
+
+
+% Glasser
+
+edg1=csvread('/Volumes/LT_storage/Edges/glasser_edgw1.csv');
+edg2=csvread('/Volumes/LT_storage/Edges/glasser_edgw1.csv');
+edg_icc_gla=csvread('/Users/leonardotozzi/Desktop/Repeatability_study/ICCs/ICC_glasser_edgw1.csv');
+
+fc_gla=mean((edg1+edg2)/2, 1);
+
+
+% Gordon
+
+edg1=csvread('/Volumes/LT_storage/Edges/gordon_edgw1.csv');
+edg2=csvread('/Volumes/LT_storage/Edges/gordon_edgw1.csv');
+edg_icc=csvread('/Users/leonardotozzi/Desktop/Repeatability_study/ICCs/ICC_gordon_edgw1.csv');
+
+fc=mean((edg1+edg2)/2, 1);
+
+scatter(fc, edg_icc, 5, 'k', 'filled', 'MarkerFaceAlpha', 0.3)
+grid on
+xticks(0:0.1:1)
+xlabel('Edge functional connectivity (r)')
+ylabel('Edge reliability (ICC)')
+title('Relationship between edgewise functional connectivity and reliability')
+
+histogram2(fc,edg_icc, 'DisplayStyle','tile')
+xticks(0:0.1:1)
+xlabel('Edge functional connectivity (r)')
+ylabel('Edge reliability (ICC)')
+title('Number of edges by functional connectivity and reliability')
+
+
+
+
+subplot(2,1,1);
+x = linspace(0,10,50);
+y1 = sin(x);
+plot(x,y1)
+title('Subplot 1')
+
+subplot(2,1,2);
+y2 = rand(50,1);
+scatter(x,y2)
+title('Subplot 2')
+
+sgtitle('My Subplot Grid Title')
+
+
+scatter(fc_bnt, edg_icc_bnt, 5, 'k', 'filled', 'MarkerFaceAlpha', 0.3)
+grid on
+xticks(0:0.1:1)
+xlabel('Edge functional connectivity (r)')
+ylabel('Edge reliability (ICC)')
+title('Relationship between edgewise functional connectivity and reliability')
+
+histogram2(fc_bnt,edg_icc_bnt, 'DisplayStyle','tile')
+xticks(0:0.1:1)
+xlabel('Edge functional connectivity (r)')
+ylabel('Edge reliability (ICC)')
+title('Number of edges by functional connectivity and reliability')
+
