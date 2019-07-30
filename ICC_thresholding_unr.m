@@ -8,9 +8,9 @@ excluded={'102008' '104820' '124220' '140824' '147030' '151223' '151526' '153833
 subs=allsubs(~ismember(allsubs, excluded));
 
 % Run only on unrelated subjects
-% disp('Running only on unrelated subjects')
-% unrelated={'100307' '100408' '101107' '101309' '101915' '103111' '103414' '103818' '105014' '105115' '106016' '108828' '110411' '111312' '111716' '113619' '113922' '114419' '115320' '116524' '117122' '118528' '118730' '118932' '120111' '122317' '122620' '123117' '123925' '124422' '125525' '126325' '127630' '127933' '128127' '128632' '129028' '130013' '130316' '131217' '131722' '133019' '133928' '135225' '135932' '136833' '138534' '139637' '140925' '144832' '146432' '147737' '148335' '148840' '149337' '149539' '149741' '151223' '151526' '151627' '153025' '154734' '156637' '159340' '160123' '161731' '162733' '163129' '176542' '178950' '188347' '189450' '190031' '192540' '196750' '198451' '199655' '201111' '208226' '211417' '211720' '212318' '214423' '221319' '239944' '245333' '280739' '298051' '366446' '397760' '414229' '499566' '654754' '672756' '751348' '756055' '792564' '856766' '857263' '899885'};
-% subs=subs(ismember(subs, unrelated));
+disp('Running only on unrelated subjects')
+unrelated={'100307' '100408' '101107' '101309' '101915' '103111' '103414' '103818' '105014' '105115' '106016' '108828' '110411' '111312' '111716' '113619' '113922' '114419' '115320' '116524' '117122' '118528' '118730' '118932' '120111' '122317' '122620' '123117' '123925' '124422' '125525' '126325' '127630' '127933' '128127' '128632' '129028' '130013' '130316' '131217' '131722' '133019' '133928' '135225' '135932' '136833' '138534' '139637' '140925' '144832' '146432' '147737' '148335' '148840' '149337' '149539' '149741' '151223' '151526' '151627' '153025' '154734' '156637' '159340' '160123' '161731' '162733' '163129' '176542' '178950' '188347' '189450' '190031' '192540' '196750' '198451' '199655' '201111' '208226' '211417' '211720' '212318' '214423' '221319' '239944' '245333' '280739' '298051' '366446' '397760' '414229' '499566' '654754' '672756' '751348' '756055' '792564' '856766' '857263' '899885'};
+subs=subs(ismember(subs, unrelated));
 
 % Name of the atlases (consistent with file naming)
 atlases={'BNT' 'glasser' 'gordon'};
@@ -18,7 +18,7 @@ atlases={'BNT' 'glasser' 'gordon'};
 thresholds=0.05:0.05:1; % a set of absolute (r value) or relative (top percentile) thresholds
 
 % Input and output folders
-matpath='/Users/leonardotozzi/Desktop/Repeatability_study/Connmats'; % where matrices are
+matpath='/Users/leonardotozzi/Desktop/Server_Leo/HCP_HYA_REST_FIX/Connmats'; % where matrices are
 edges_outputpath='/Volumes/LT_storage/Edges'; % where edges will be saved
 ICC_outputpath='/Users/leonardotozzi/Desktop/Repeatability_study/ICCs'; % where ICCs will be saved
 
@@ -72,10 +72,10 @@ for atlas=1:length(atlases)
         end
         
         % Saving the thresholded edges
-        csvwrite(strcat(edges_outputpath, '/', atlases{atlas}, '_perc_edg1_thr', num2str(thresholds(thresh)), '.csv'), perc_edg1)
-        csvwrite(strcat(edges_outputpath, '/', atlases{atlas}, '_perc_edg2_thr', num2str(thresholds(thresh)), '.csv'), perc_edg2)
-        csvwrite(strcat(edges_outputpath, '/', atlases{atlas}, '_abs_edg1_thr', num2str(thresholds(thresh)), '.csv'), abs_edg1)
-        csvwrite(strcat(edges_outputpath, '/', atlases{atlas}, '_abs_edg2_thr', num2str(thresholds(thresh)), '.csv'), abs_edg2)
+        csvwrite(strcat(edges_outputpath, '/', atlases{atlas}, '_perc_edg1_thr', num2str(thresholds(thresh)), '_unr.csv'), perc_edg1)
+        csvwrite(strcat(edges_outputpath, '/', atlases{atlas}, '_perc_edg2_thr', num2str(thresholds(thresh)), '_unr.csv'), perc_edg2)
+        csvwrite(strcat(edges_outputpath, '/', atlases{atlas}, '_abs_edg1_thr', num2str(thresholds(thresh)), '_unr.csv'), abs_edg1)
+        csvwrite(strcat(edges_outputpath, '/', atlases{atlas}, '_abs_edg2_thr', num2str(thresholds(thresh)), '_unr.csv'), abs_edg2)
         
     end
     
@@ -108,10 +108,10 @@ for atlas=1:length(atlases)
         disp(strcat('Threshold:', {' '}, num2str(thresholds(thresh))))
         
         % Loading edges
-        perc_edg1=csvread(strcat(edges_outputpath, '/', atlases{atlas}, '_perc_edg1_thr', num2str(thresholds(thresh)), '.csv'));
-        perc_edg2=csvread(strcat(edges_outputpath, '/', atlases{atlas}, '_perc_edg2_thr', num2str(thresholds(thresh)), '.csv'));
-        abs_edg1=csvread(strcat(edges_outputpath, '/', atlases{atlas}, '_abs_edg1_thr', num2str(thresholds(thresh)), '.csv'));
-        abs_edg2=csvread(strcat(edges_outputpath, '/', atlases{atlas}, '_abs_edg2_thr', num2str(thresholds(thresh)), '.csv'));
+        perc_edg1=csvread(strcat(edges_outputpath, '/', atlases{atlas}, '_perc_edg1_thr', num2str(thresholds(thresh)), '_unr.csv'));
+        perc_edg2=csvread(strcat(edges_outputpath, '/', atlases{atlas}, '_perc_edg2_thr', num2str(thresholds(thresh)), '_unr.csv'));
+        abs_edg1=csvread(strcat(edges_outputpath, '/', atlases{atlas}, '_abs_edg1_thr', num2str(thresholds(thresh)), '_unr.csv'));
+        abs_edg2=csvread(strcat(edges_outputpath, '/', atlases{atlas}, '_abs_edg2_thr', num2str(thresholds(thresh)), '_unr.csv'));
         
         abs_ratiokept=nan(1, feats);
         abs_icc_onlycons=nan(1, feats);
@@ -205,10 +205,10 @@ for atlas=1:length(atlases)
     end
     
     % Save summary values for each threshold 
-    csvwrite(strcat(ICC_outputpath, '/abs_ratiokept_lvl', '_', atlases{atlas}, '.csv'), abs_ratiokept_lvl)
-    csvwrite(strcat(ICC_outputpath, '/perc_ratiokept_lvl', '_', atlases{atlas}, '.csv'), perc_ratiokept_lvl)
-    csvwrite(strcat(ICC_outputpath, '/abs_icc_onlycons_lvl', '_', atlases{atlas}, '.csv'), abs_icc_onlycons_lvl)
-    csvwrite(strcat(ICC_outputpath, '/perc_icc_onlycons_lvl', '_', atlases{atlas}, '.csv'), perc_icc_onlycons_lvl)
+    csvwrite(strcat(ICC_outputpath, '/abs_ratiokept_lvl', '_', atlases{atlas}, '_unr.csv'), abs_ratiokept_lvl)
+    csvwrite(strcat(ICC_outputpath, '/perc_ratiokept_lvl', '_', atlases{atlas}, '_unr.csv'), perc_ratiokept_lvl)
+    csvwrite(strcat(ICC_outputpath, '/abs_icc_onlycons_lvl', '_', atlases{atlas}, '_unr.csv'), abs_icc_onlycons_lvl)
+    csvwrite(strcat(ICC_outputpath, '/perc_icc_onlycons_lvl', '_', atlases{atlas}, '_unr.csv'), perc_icc_onlycons_lvl)
     
 end
 
@@ -217,13 +217,13 @@ end
 
 names={'Poor' 'Fair' 'Good' 'Excellent' 'Median'}
 
-figure()
+figure('Position', [10 10 800 1000])
 
 % Brainnetome
-abs_ratiokept_lvl_BNT=csvread(strcat(ICC_outputpath, '/abs_ratiokept_lvl_BNT.csv'));
-perc_ratiokept_lvl_BNT=csvread(strcat(ICC_outputpath, '/perc_ratiokept_lvl_BNT.csv'));
-abs_icc_onlycons_lvl_BNT=csvread(strcat(ICC_outputpath, '/abs_icc_onlycons_lvl_BNT.csv'));
-perc_icc_onlycons_lvl_BNT=csvread(strcat(ICC_outputpath, '/perc_icc_onlycons_lvl_BNT.csv'));
+abs_ratiokept_lvl_BNT=csvread(strcat(ICC_outputpath, '/abs_ratiokept_lvl_BNT_unr.csv'));
+perc_ratiokept_lvl_BNT=csvread(strcat(ICC_outputpath, '/perc_ratiokept_lvl_BNT_unr.csv'));
+abs_icc_onlycons_lvl_BNT=csvread(strcat(ICC_outputpath, '/abs_icc_onlycons_lvl_BNT_unr.csv'));
+perc_icc_onlycons_lvl_BNT=csvread(strcat(ICC_outputpath, '/perc_icc_onlycons_lvl_BNT_unr.csv'));
 
 subplot(3, 2, 1)
 p1=plot(thresholds(1:18), abs_ratiokept_lvl_BNT(1:18,1:5), 'LineWidth',2)
@@ -241,10 +241,10 @@ ylabel('Proportion of edges')
 
 % Glasser
 
-abs_ratiokept_lvl_glasser=csvread(strcat(ICC_outputpath, '/abs_ratiokept_lvl_glasser.csv'));
-perc_ratiokept_lvl_glasser=csvread(strcat(ICC_outputpath, '/perc_ratiokept_lvl_glasser.csv'));
-abs_icc_onlycons_lvl_glasser=csvread(strcat(ICC_outputpath, '/abs_icc_onlycons_lvl_glasser.csv'));
-perc_icc_onlycons_lvl_glasser=csvread(strcat(ICC_outputpath, '/perc_icc_onlycons_lvl_glasser.csv'));
+abs_ratiokept_lvl_glasser=csvread(strcat(ICC_outputpath, '/abs_ratiokept_lvl_glasser_unr.csv'));
+perc_ratiokept_lvl_glasser=csvread(strcat(ICC_outputpath, '/perc_ratiokept_lvl_glasser_unr.csv'));
+abs_icc_onlycons_lvl_glasser=csvread(strcat(ICC_outputpath, '/abs_icc_onlycons_lvl_glasser_unr.csv'));
+perc_icc_onlycons_lvl_glasser=csvread(strcat(ICC_outputpath, '/perc_icc_onlycons_lvl_glasser_unr.csv'));
 
 
 subplot(3, 2, 3)
@@ -263,10 +263,10 @@ ylabel('Proportion of edges')
 
 % Gordon
 
-abs_ratiokept_lvl_gordon=csvread(strcat(ICC_outputpath, '/abs_ratiokept_lvl_gordon.csv'));
-perc_ratiokept_lvl_gordon=csvread(strcat(ICC_outputpath, '/perc_ratiokept_lvl_gordon.csv'));
-abs_icc_onlycons_lvl_gordon=csvread(strcat(ICC_outputpath, '/abs_icc_onlycons_lvl_gordon.csv'));
-perc_icc_onlycons_lvl_gordon=csvread(strcat(ICC_outputpath, '/perc_icc_onlycons_lvl_gordon.csv'));
+abs_ratiokept_lvl_gordon=csvread(strcat(ICC_outputpath, '/abs_ratiokept_lvl_gordon_unr.csv'));
+perc_ratiokept_lvl_gordon=csvread(strcat(ICC_outputpath, '/perc_ratiokept_lvl_gordon_unr.csv'));
+abs_icc_onlycons_lvl_gordon=csvread(strcat(ICC_outputpath, '/abs_icc_onlycons_lvl_gordon_unr.csv'));
+perc_icc_onlycons_lvl_gordon=csvread(strcat(ICC_outputpath, '/perc_icc_onlycons_lvl_gordon_unr.csv'));
 
 
 subplot(3, 2, 5)
@@ -290,12 +290,12 @@ Lgnd = legend(names);
 Lgnd.Position(1) = 0.01;
 Lgnd.Position(2) = 0.4;
 
-suptitle('Influence of thresholding on consistency of edges retained')
+suptitle('Influence of thresholding on consistency of edges retained (unrelated)')
 
 
-%%%%% Plotting effects of thresholding on ICC
+%%%%% Plotting effects of thresholding on ICC of consistent edges
 
-figure('Position', [10 2 900 600])
+figure('Position', [10 10 800 1000])
 
 subplot(3, 2, 1)
 plot(thresholds(1:18), abs_icc_onlycons_lvl_BNT(1:18,1:5), 'LineWidth',2)
@@ -340,4 +340,4 @@ Lgnd = legend(names);
 Lgnd.Position(1) = 0.01;
 Lgnd.Position(2) = 0.4;
 
-suptitle('Influence of thresholding on ICC of consistent edges')
+suptitle('Influence of thresholding on ICC of consistent edges (unrelated)')
