@@ -1,4 +1,4 @@
-% This script is calculating ICC and Jaccard index for 2 ways of
+% This script is calculating ICC and consistency of edges retained for 2 ways of
 % thresholding the matrices: by keeping the top n percentile and by using a
 % "hard" r threshold
 
@@ -125,8 +125,7 @@ for atlas=1:length(atlases)
             data=[ abs_edg1(:,feat) abs_edg2(:,feat) ];
             
             % Calculate how many times an edge is consistently kept out of
-            % the times it is ever kept (Jaccard index)
-            % if edge is always removed, set to NaN
+            % the times it is kept at least once. If edge is always removed, set to NaN
             if (sum(data(:,1)>0) + sum(data(:,2)>0))==0
                 abs_ratiokept(1,feat)=NaN;
             else
@@ -147,8 +146,7 @@ for atlas=1:length(atlases)
             data=[ perc_edg1(:,feat) perc_edg2(:,feat) ];
             
             % Calculate how many times an edge is consistently kept out of
-            % the times it is ever kept. If edge is always removed, set to NaN
-            
+            % the times it is kept at least once. If edge is always removed, set to NaN
             if (sum(data(:,1)~=0) + sum(data(:,2)~=0))==0
                 perc_ratiokept(1,feat)=NaN;
             else
