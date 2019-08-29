@@ -2,7 +2,7 @@
 
 This is the repository for the study: 
 
-"Short-term test-retest reliability of the resting state functional connectome: influence of analysis choices and implications for biomarker studies"
+"Short-term stability of the human intrinsic functional connectome"
 
 Summary:
 
