@@ -14,9 +14,9 @@ subs=allsubs(~ismember(allsubs, excluded));
 atlases={'BNT' 'glasser' 'gordon'};
 
 % Input and output folders
-matpath='/Users/leonardotozzi/Desktop/Server_Leo/HCP_HYA_REST_FIX/Connmats'; % where matrices are
-edges_outputpath='/Users/leonardotozzi/Desktop/Repeatability_study/Edges'; % where edges will be saved
-ICC_outputpath='/Users/leonardotozzi/Desktop/Repeatability_study/ICCs'; % where ICCs will be saved
+matpath='/Users/ltozzi/Desktop/Connmats'; % path to the matrices
+edges_outputpath='/Users/ltozzi/Desktop/Edges'; % where edges will be saved
+ICC_outputpath='/Users/ltozzi/Desktop/ICCs'; % where edges will be saved
 
 for atlas=1:length(atlases)
     
@@ -74,14 +74,29 @@ for atlas=1:length(atlases)
     
     iccall=nan(1, feats);
     iccall_gsr=nan(1, feats);
+    pall=nan(1, feats);
+    pall_gsr=nan(1, feats);
+    lball=nan(1, feats);
+    lball_gsr=nan(1, feats);
+    uball=nan(1, feats);
+    uball_gsr=nan(1, feats);
 
     for feat=1:size(alledgw1, 2)
         %no GSR
         data=[ alledgw1(:,feat) alledgw2(:,feat) ];
-        iccall(1,feat) = ICC(data, 'C-1');
+        [r, LB, UB, F, df1, df2, p] = ICC(data, 'C-1');
+        iccall(1,feat) = r;
+        pall(1,feat) = p;
+        lball(1,feat)=LB;
+        uball(1,feat)=UB;
+
         % GSR
         data_gsr=[ alledgw1_gsr(:,feat) alledgw2_gsr(:,feat) ];
-        iccall_gsr(1,feat) = ICC(data_gsr, 'C-1');
+        [r, LB, UB, F, df1, df2, p] = ICC(data_gsr, 'C-1');
+        iccall_gsr(1,feat) = r;
+        pall_gsr(1,feat) = p;
+        lball_gsr(1,feat)=LB;
+        uball_gsr(1,feat)=UB;
     end
     
     % Calculate ICC levels
@@ -108,27 +123,108 @@ for atlas=1:length(atlases)
 
     icclevelsGSR=[ICC_poor_gsr ICC_fair_gsr ICC_good_gsr ICC_excellent_gsr ICC_medianicc_gsr ICC_minicc_gsr ICC_maxicc_gsr];
     
+    % Calculate ICC levels with alternative thresholds
+    
+    %no GSR
+    ICC_slight_nogsr=sum(iccall<0.20, 2)/size(iccall, 2);
+    ICC_fairalt_nogsr=sum((0.20<=iccall) & (iccall<0.40), 2)/size(iccall, 2);
+    ICC_moderate_nogsr=sum((0.40<=iccall) & (iccall<0.60), 2)/size(iccall, 2);
+    ICC_substantial_nogsr=sum((0.60<=iccall) & (iccall<0.80), 2)/size(iccall, 2);
+    ICC_perfect_nogsr=sum(iccall>=0.80, 2)/size(iccall, 2);
+
+    icclevelsnoGSR_alt=[ICC_slight_nogsr ICC_fairalt_nogsr ICC_moderate_nogsr ICC_substantial_nogsr ICC_perfect_nogsr ICC_medianicc_nogsr ICC_minicc_nogs ICC_maxicc_nogs];
+
+    % GSR
+    ICC_slight_gsr=sum(iccall_gsr<0.20, 2)/size(iccall_gsr, 2);
+    ICC_fairalt_gsr=sum((0.20<=iccall_gsr) & (iccall_gsr<0.40), 2)/size(iccall_gsr, 2);
+    ICC_moderate_gsr=sum((0.40<=iccall_gsr) & (iccall_gsr<0.60), 2)/size(iccall_gsr, 2);
+    ICC_substantial_gsr=sum((0.60<=iccall_gsr) & (iccall_gsr<0.80), 2)/size(iccall_gsr, 2);
+    ICC_perfect_gsr=sum(iccall_gsr>=0.80, 2)/size(iccall_gsr, 2);
+
+    icclevelsGSR_alt=[ICC_slight_gsr ICC_fairalt_gsr ICC_moderate_gsr ICC_substantial_gsr ICC_perfect_gsr ICC_medianicc_gsr ICC_minicc_gsr ICC_maxicc_gsr];
+
     % Save ICC
     
     csvwrite(strcat(ICC_outputpath, '/', 'ICC_', atlases{atlas}, '_edgw1.csv'), iccall)
     csvwrite(strcat(ICC_outputpath, '/', 'ICC_', atlases{atlas}, '_edgw1_lvls.csv'), icclevelsnoGSR)
-    
+    csvwrite(strcat(ICC_outputpath, '/', 'ICC_', atlases{atlas}, '_edgw1_lvls_alt.csv'), icclevelsnoGSR_alt)
+
     csvwrite(strcat(ICC_outputpath, '/', 'ICC_', atlases{atlas}, '_edgw1_gsr.csv'), iccall_gsr)
     csvwrite(strcat(ICC_outputpath, '/', 'ICC_', atlases{atlas}, '_edgw1_lvls_gsr.csv'), icclevelsGSR)
+    csvwrite(strcat(ICC_outputpath, '/', 'ICC_', atlases{atlas}, '_edgw1_lvls_gsr_alt.csv'), icclevelsGSR_alt)
     
+    % Save p-values and boundaries
+    
+    csvwrite(strcat(ICC_outputpath, '/', 'ICC_', atlases{atlas}, '_edgw1_p.csv'), pall)
+    csvwrite(strcat(ICC_outputpath, '/', 'ICC_', atlases{atlas}, '_edgw1_p_gsr.csv'), pall_gsr)
+    csvwrite(strcat(ICC_outputpath, '/', 'ICC_', atlases{atlas}, '_edgw1_ib.csv'), lball)
+    csvwrite(strcat(ICC_outputpath, '/', 'ICC_', atlases{atlas}, '_edgw1_ib_gsr.csv'), lball_gsr)
+    csvwrite(strcat(ICC_outputpath, '/', 'ICC_', atlases{atlas}, '_edgw1_ub.csv'), uball)
+    csvwrite(strcat(ICC_outputpath, '/', 'ICC_', atlases{atlas}, '_edgw1_ub_gsr.csv'), uball_gsr)
+
 end
 
 % Plot results
-
+% Loading BNT data
+icc_bnt=csvread(strcat(ICC_outputpath, '/ICC_BNT_edgw1.csv'));
+icc_bnt_gsr=csvread(strcat(ICC_outputpath, '/ICC_BNT_edgw1_gsr.csv'));
 ICC_BNT_lvls=csvread(strcat(ICC_outputpath, '/', 'ICC_BNT_edgw1_lvls.csv'));
 ICC_BNT_lvls_gsr=csvread(strcat(ICC_outputpath, '/', 'ICC_BNT_edgw1_lvls_gsr.csv'));
+
+% Loading Glasser data
+icc_gla=csvread(strcat(ICC_outputpath, '/ICC_glasser_edgw1.csv'));
+icc_gla_gsr=csvread(strcat(ICC_outputpath, '/ICC_glasser_edgw1_gsr.csv'));
 ICC_glasser_lvls=csvread(strcat(ICC_outputpath, '/', 'ICC_glasser_edgw1_lvls.csv'));
 ICC_glasser_lvls_gsr=csvread(strcat(ICC_outputpath, '/', 'ICC_glasser_edgw1_lvls_gsr.csv'));
+
+% Loading Gordon data
+icc_gor=csvread(strcat(ICC_outputpath, '/ICC_gordon_edgw1.csv'));
+icc_gor_gsr=csvread(strcat(ICC_outputpath, '/ICC_gordon_edgw1_gsr.csv'));
 ICC_gordon_lvls=csvread(strcat(ICC_outputpath, '/', 'ICC_gordon_edgw1_lvls.csv'));
 ICC_gordon_lvls_gsr=csvread(strcat(ICC_outputpath, '/', 'ICC_gordon_edgw1_lvls_gsr.csv'));
 
+% Plot difference between GSR
+figure('Position', [10 10 900 600])
+
+subplot(1, 2, 1)
+groups=[zeros(size(icc_bnt, 2), 1); ones(size(icc_bnt, 2), 1); 2*ones(size(icc_gla, 2), 1); 3*ones(size(icc_gla, 2), 1); 4*ones(size(icc_gor, 2), 1); 5*ones(size(icc_gor, 2), 1)]; 
+h=boxplot([icc_bnt'; icc_bnt_gsr'; icc_gla'; icc_gla_gsr'; icc_gor'; icc_gor_gsr'],groups, 'Symbol', 'k', 'Colors', [46 114 183; 189 85 43]/255)
+set(h,{'linew'},{2})
+xticklabels({'Brainnetome (GSR-)','Brainnetome (GSR+)','Glasser (GSR-)','Glasser (GSR+)','Gordon (GSR-)', 'Gordon (GSR+)'})
+ylabel('ICC of atlas edges')
+box_vars = findall(gca,'Tag','Box');
+hLegend = legend(findall(gca,'Tag','Box'), {'GSR-','GSR+'}, 'Location', 'WestOutside');
+xtickangle(45)
+
+subplot(1, 2, 2)
 ctrs = 1:6;
 data = [ICC_BNT_lvls(1:4); ICC_BNT_lvls_gsr(1:4); ICC_glasser_lvls(1:4); ICC_glasser_lvls_gsr(1:4); ICC_gordon_lvls(1:4); ICC_gordon_lvls_gsr(1:4)];
+H=bar(ctrs,data,'stacked', 'LineWidth',1)
+myC= [0 0 1; 0.91 0.41 0.17; 1 1 0; 0 1 0];
+ylim([0 1.1])
+
+for k=1:4
+  set(H(k),'facecolor',myC(k,:))
+end
+
+xticklabels({'Brainnetome (GSR-)' 'Brainnetome (GSR+)' 'Glasser (GSR-)' 'Glasser (GSR+)' 'Gordon (GSR-)' 'Gordon (GSR)'})
+ylabel('Proportion of edges')
+legend({'Poor' 'Fair' 'Good' 'Excellent'}, 'Location','EastOutside')
+xtickangle(45)
+
+% Plot results with alternative thresholds
+
+figure('Position', [10 10 800 700])
+
+ICC_BNT_lvls=csvread(strcat(ICC_outputpath, '/', 'ICC_BNT_edgw1_lvls_alt.csv'));
+ICC_BNT_lvls_gsr=csvread(strcat(ICC_outputpath, '/', 'ICC_BNT_edgw1_lvls_gsr_alt.csv'));
+ICC_glasser_lvls=csvread(strcat(ICC_outputpath, '/', 'ICC_glasser_edgw1_lvls_alt.csv'));
+ICC_glasser_lvls_gsr=csvread(strcat(ICC_outputpath, '/', 'ICC_glasser_edgw1_lvls_gsr_alt.csv'));
+ICC_gordon_lvls=csvread(strcat(ICC_outputpath, '/', 'ICC_gordon_edgw1_lvls_alt.csv'));
+ICC_gordon_lvls_gsr=csvread(strcat(ICC_outputpath, '/', 'ICC_gordon_edgw1_lvls_gsr_alt.csv'));
+
+ctrs = 1:6;
+data = [ICC_BNT_lvls(1:5); ICC_BNT_lvls_gsr(1:5); ICC_glasser_lvls(1:5); ICC_glasser_lvls_gsr(1:5); ICC_gordon_lvls(1:5); ICC_gordon_lvls_gsr(1:5)];
 H=bar(ctrs,data,'stacked', 'LineWidth',1)
 myC= [0 0 1; 0.91 0.41 0.17; 1 1 0; 0 1 0];
 ylim([0 1.1])
@@ -140,7 +236,8 @@ end
 xticklabels({'Brainnetome' 'Brainnetome (GSR)' 'Glasser' 'Glasser (GSR)' 'Gordon' 'Gordon (GSR)'})
 ylabel('Proportion of edges')
 title('Reliability of edges')
-legend({'Poor' 'Fair' 'Good' 'Excellent'})
+legend({'Slight' 'Fair' 'Moderate' 'Substantial' 'Perfect'}, 'Location','EastOutside')
+xtickangle(45)
 
 
 

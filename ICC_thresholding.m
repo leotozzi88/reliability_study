@@ -7,20 +7,15 @@ allsubs={'100206' '100307' '100408' '100610' '101006' '101309' '101915' '102008'
 excluded={'102008' '104820' '124220' '140824' '147030' '151223' '151526' '153833' '159138' '161327' '161832' '163331' '171532' '175439' '205220' '223929' '233326' '298051' '311320' '352132' '366446' '392447' '453542' '562345' '748662' '833249' '947668'};
 subs=allsubs(~ismember(allsubs, excluded));
 
-% Run only on unrelated subjects
-% disp('Running only on unrelated subjects')
-% unrelated={'100307' '100408' '101107' '101309' '101915' '103111' '103414' '103818' '105014' '105115' '106016' '108828' '110411' '111312' '111716' '113619' '113922' '114419' '115320' '116524' '117122' '118528' '118730' '118932' '120111' '122317' '122620' '123117' '123925' '124422' '125525' '126325' '127630' '127933' '128127' '128632' '129028' '130013' '130316' '131217' '131722' '133019' '133928' '135225' '135932' '136833' '138534' '139637' '140925' '144832' '146432' '147737' '148335' '148840' '149337' '149539' '149741' '151223' '151526' '151627' '153025' '154734' '156637' '159340' '160123' '161731' '162733' '163129' '176542' '178950' '188347' '189450' '190031' '192540' '196750' '198451' '199655' '201111' '208226' '211417' '211720' '212318' '214423' '221319' '239944' '245333' '280739' '298051' '366446' '397760' '414229' '499566' '654754' '672756' '751348' '756055' '792564' '856766' '857263' '899885'};
-% subs=subs(ismember(subs, unrelated));
-
 % Name of the atlases (consistent with file naming)
 atlases={'BNT' 'glasser' 'gordon'};
 
 thresholds=0.05:0.05:1; % a set of absolute (r value) or relative (top percentile) thresholds
 
 % Input and output folders
-matpath='/Users/leonardotozzi/Desktop/Repeatability_study/Connmats'; % where matrices are
-edges_outputpath='/Volumes/LT_storage/Edges'; % where edges will be saved
-ICC_outputpath='/Users/leonardotozzi/Desktop/Repeatability_study/ICCs'; % where ICCs will be saved
+matpath='/Users/ltozzi/Desktop/Connmats'; % path to the matrices
+edges_outputpath='/Users/ltozzi/Desktop/Edges'; % where edges will be saved
+ICC_outputpath='/Users/ltozzi/Desktop/ICCs'; % where edges will be saved
 
 % For each atlas and subject, load matrix, threshold and save the edges
 
@@ -202,6 +197,47 @@ for atlas=1:length(atlases)
         perc_icc_onlycons_max=nanmax(perc_icc_onlycons, [], 2);
         perc_icc_onlycons_lvl(thresh, :)=[perc_icc_onlycons_poor perc_icc_onlycons_fair perc_icc_onlycons_good perc_icc_onlycons_excellent perc_icc_onlycons_median perc_icc_onlycons_min perc_icc_onlycons_max];
         
+        % Store alternative ICC bins for each threshold
+        abs_ratiokept_slight=sum(abs_ratiokept<0.20, 2)/sum(~isnan(abs_ratiokept));
+        abs_ratiokept_fairalt=sum((0.20<=abs_ratiokept) & (abs_ratiokept<0.40), 2)/sum(~isnan(abs_ratiokept));
+        abs_ratiokept_moderate=sum((0.40<=abs_ratiokept) & (abs_ratiokept<0.60), 2)/sum(~isnan(abs_ratiokept));
+        abs_ratiokept_substantial=sum((0.60<=abs_ratiokept) & (abs_ratiokept<0.80), 2)/sum(~isnan(abs_ratiokept));
+        abs_ratiokept_perfect=sum(abs_ratiokept>=0.80, 2)/sum(~isnan(abs_ratiokept));
+        abs_ratiokept_median=nanmedian(abs_ratiokept, 2);
+        abs_ratiokept_min=nanmin(abs_ratiokept, [], 2);
+        abs_ratiokept_max=nanmax(abs_ratiokept, [], 2);
+        abs_ratiokept_lvlalt(thresh, :)=[abs_ratiokept_slight abs_ratiokept_fairalt abs_ratiokept_moderate abs_ratiokept_substantial abs_ratiokept_perfect abs_ratiokept_median abs_ratiokept_min abs_ratiokept_max];
+        
+        abs_icc_onlycons_slight=sum(abs_icc_onlycons<0.20, 2)/sum(~isnan(abs_icc_onlycons));
+        abs_icc_onlycons_fairalt=sum((0.20<=abs_icc_onlycons) & (abs_icc_onlycons<0.40), 2)/sum(~isnan(abs_icc_onlycons));
+        abs_icc_onlycons_moderate=sum((0.40<=abs_icc_onlycons) & (abs_icc_onlycons<0.60), 2)/sum(~isnan(abs_icc_onlycons));
+        abs_icc_onlycons_substantial=sum((0.60<=abs_icc_onlycons) & (abs_icc_onlycons<0.80), 2)/sum(~isnan(abs_icc_onlycons));
+        abs_icc_onlycons_perfect=sum(abs_icc_onlycons>=0.80, 2)/sum(~isnan(abs_icc_onlycons));
+        abs_icc_onlycons_median=nanmedian(abs_icc_onlycons, 2);
+        abs_icc_onlycons_min=nanmin(abs_icc_onlycons, [], 2);
+        abs_icc_onlycons_max=nanmax(abs_icc_onlycons, [], 2);
+        abs_icc_onlycons_lvlalt(thresh, :)=[abs_icc_onlycons_slight abs_icc_onlycons_fairalt abs_icc_onlycons_moderate abs_icc_onlycons_substantial abs_icc_onlycons_perfect abs_icc_onlycons_median abs_icc_onlycons_min abs_icc_onlycons_max];
+        
+        perc_ratiokept_slight=sum(perc_ratiokept<0.20, 2)/sum(~isnan(perc_ratiokept));
+        perc_ratiokept_fairalt=sum((0.20<=perc_ratiokept) & (perc_ratiokept<0.40), 2)/sum(~isnan(perc_ratiokept));
+        perc_ratiokept_moderate=sum((0.40<=perc_ratiokept) & (perc_ratiokept<0.60), 2)/sum(~isnan(perc_ratiokept));
+        perc_ratiokept_substantial=sum((0.60<=perc_ratiokept) & (perc_ratiokept<0.80), 2)/sum(~isnan(perc_ratiokept));
+        perc_ratiokept_perfect=sum(perc_ratiokept>=0.80, 2)/sum(~isnan(perc_ratiokept));
+        perc_ratiokept_median=nanmedian(perc_ratiokept, 2);
+        perc_ratiokept_min=nanmin(perc_ratiokept, [], 2);
+        perc_ratiokept_max=nanmax(perc_ratiokept, [], 2);
+        perc_ratiokept_lvlalt(thresh, :)=[perc_ratiokept_slight perc_ratiokept_fairalt perc_ratiokept_moderate perc_ratiokept_substantial perc_ratiokept_perfect perc_ratiokept_median perc_ratiokept_min perc_ratiokept_max];
+        
+        perc_icc_onlycons_slight=sum(perc_icc_onlycons<0.20, 2)/sum(~isnan(perc_icc_onlycons));
+        perc_icc_onlycons_fairalt=sum((0.20<=perc_icc_onlycons) & (perc_icc_onlycons<0.40), 2)/sum(~isnan(perc_icc_onlycons));
+        perc_icc_onlycons_moderate=sum((0.40<=perc_icc_onlycons) & (perc_icc_onlycons<0.60), 2)/sum(~isnan(perc_icc_onlycons));
+        perc_icc_onlycons_substantial=sum((0.60<=perc_icc_onlycons) & (perc_icc_onlycons<0.80), 2)/sum(~isnan(perc_icc_onlycons));
+        perc_icc_onlycons_perfect=sum(perc_icc_onlycons>=0.80, 2)/sum(~isnan(perc_icc_onlycons));
+        perc_icc_onlycons_median=nanmedian(perc_icc_onlycons, 2);
+        perc_icc_onlycons_min=nanmin(perc_icc_onlycons, [], 2);
+        perc_icc_onlycons_max=nanmax(perc_icc_onlycons, [], 2);
+        perc_icc_onlycons_lvlalt(thresh, :)=[perc_icc_onlycons_slight perc_icc_onlycons_fairalt perc_icc_onlycons_moderate perc_icc_onlycons_substantial perc_icc_onlycons_perfect perc_icc_onlycons_median perc_icc_onlycons_min perc_icc_onlycons_max];
+                
     end
     
     % Save summary values for each threshold 
@@ -209,7 +245,12 @@ for atlas=1:length(atlases)
     csvwrite(strcat(ICC_outputpath, '/perc_ratiokept_lvl', '_', atlases{atlas}, '.csv'), perc_ratiokept_lvl)
     csvwrite(strcat(ICC_outputpath, '/abs_icc_onlycons_lvl', '_', atlases{atlas}, '.csv'), abs_icc_onlycons_lvl)
     csvwrite(strcat(ICC_outputpath, '/perc_icc_onlycons_lvl', '_', atlases{atlas}, '.csv'), perc_icc_onlycons_lvl)
-    
+      
+    csvwrite(strcat(ICC_outputpath, '/abs_ratiokept_lvlalt', '_', atlases{atlas}, '.csv'), abs_ratiokept_lvlalt)
+    csvwrite(strcat(ICC_outputpath, '/perc_ratiokept_lvlalt', '_', atlases{atlas}, '.csv'), perc_ratiokept_lvlalt)
+    csvwrite(strcat(ICC_outputpath, '/abs_icc_onlycons_lvlalt', '_', atlases{atlas}, '.csv'), abs_icc_onlycons_lvlalt)
+    csvwrite(strcat(ICC_outputpath, '/perc_icc_onlycons_lvlalt', '_', atlases{atlas}, '.csv'), perc_icc_onlycons_lvlalt)
+
 end
 
 
@@ -236,7 +277,7 @@ p2=subplot(3, 2, 2)
 plot(thresholds(1:18), perc_ratiokept_lvl_BNT(1:18,1:5), 'LineWidth',2)
 %legend(names, 'Location', 'eastoutside')
 title(strcat('Relative threshold (Brainnetome)'))
-xlabel('Top percent retained')
+xlabel('Top proportion retained')
 ylabel('Proportion of edges')
 
 % Glasser
@@ -258,7 +299,7 @@ subplot(3, 2, 4)
 p4=plot(thresholds(1:18), perc_ratiokept_lvl_glasser(1:18,1:5), 'LineWidth',2)
 %legend(names, 'Location', 'eastoutside')
 title(strcat('Relative threshold (Glasser)'))
-xlabel('Top percent retained')
+xlabel('Top proportion retained')
 ylabel('Proportion of edges')
 
 % Gordon
@@ -280,7 +321,7 @@ subplot(3, 2, 6)
 p6=plot(thresholds(1:18), perc_ratiokept_lvl_gordon(1:18,1:5), 'LineWidth',2)
 %legend(names, 'Location', 'eastoutside')
 title(strcat('Relative threshold (Gordon)'))
-xlabel('Top percent retained')
+xlabel('Top proportion retained')
 ylabel('Proportion of edges')
 
 % Adding overall legend
@@ -290,7 +331,7 @@ Lgnd = legend(names);
 Lgnd.Position(1) = 0.01;
 Lgnd.Position(2) = 0.4;
 
-suptitle('Influence of thresholding on consistency of edges retained')
+sgtitle('Influence of thresholding on consistency of edges retained')
 
 
 %%%%% Plotting effects of thresholding on ICC of consistent edges
@@ -306,7 +347,7 @@ ylabel('Proportion of edges')
 subplot(3, 2, 2)
 plot(thresholds(1:18), perc_icc_onlycons_lvl_BNT(1:18,1:5), 'LineWidth',2)
 title(strcat('Relative threshold (Brainnetome)'))
-xlabel('Top percent retained')
+xlabel('Top proportion retained')
 ylabel('Proportion of edges')
 
 subplot(3, 2, 3)
@@ -318,7 +359,7 @@ ylabel('Proportion of edges')
 subplot(3, 2, 4)
 plot(thresholds(1:18), perc_icc_onlycons_lvl_glasser(1:18,1:5), 'LineWidth',2)
 title(strcat('Relative threshold (Glasser)'))
-xlabel('Top percent retained')
+xlabel('Top proportion retained')
 ylabel('Proportion of edges')
 
 subplot(3, 2, 5)
@@ -330,7 +371,7 @@ ylabel('Proportion of edges')
 subplot(3, 2, 6)
 plot(thresholds(1:18), perc_icc_onlycons_lvl_gordon(1:18,1:5), 'LineWidth',2)
 title(strcat('Relative threshold (Gordon)'))
-xlabel('Top percent retained')
+xlabel('Top proportion retained')
 ylabel('Proportion of edges')
 
 % Adding overall legend
@@ -340,4 +381,136 @@ Lgnd = legend(names);
 Lgnd.Position(1) = 0.01;
 Lgnd.Position(2) = 0.4;
 
-suptitle('Influence of thresholding on ICC of consistent edges')
+sgtitle('Influence of thresholding on ICC of consistent edges')
+
+
+%%%%% Plotting effects of thresholding on consistency of edges retained for
+%%%%% alternative thresholds 
+
+names={'Slight' 'Fair' 'Moderate' 'Substantial' 'Perfect' 'Median'}
+
+figure('Position', [10 10 800 1000])
+
+% Brainnetome
+abs_ratiokept_lvlalt_BNT=csvread(strcat(ICC_outputpath, '/abs_ratiokept_lvlalt_BNT.csv'));
+perc_ratiokept_lvlalt_BNT=csvread(strcat(ICC_outputpath, '/perc_ratiokept_lvlalt_BNT.csv'));
+abs_icc_onlycons_lvlalt_BNT=csvread(strcat(ICC_outputpath, '/abs_icc_onlycons_lvlalt_BNT.csv'));
+perc_icc_onlycons_lvlalt_BNT=csvread(strcat(ICC_outputpath, '/perc_icc_onlycons_lvlalt_BNT.csv'));
+
+subplot(3, 2, 1)
+p1=plot(thresholds(1:18), abs_ratiokept_lvlalt_BNT(1:18,1:6), 'LineWidth',2)
+%legend(names, 'Location', 'eastoutside')
+title(strcat('Absolute threshold (Brainnetome)'))
+xlabel('r value')
+ylabel('Proportion of edges')
+
+p2=subplot(3, 2, 2)
+plot(thresholds(1:18), perc_ratiokept_lvlalt_BNT(1:18,1:6), 'LineWidth',2)
+%legend(names, 'Location', 'eastoutside')
+title(strcat('Relative threshold (Brainnetome)'))
+xlabel('Top proportion retained')
+ylabel('Proportion of edges')
+
+% Glasser
+
+abs_ratiokept_lvlalt_glasser=csvread(strcat(ICC_outputpath, '/abs_ratiokept_lvlalt_glasser.csv'));
+perc_ratiokept_lvlalt_glasser=csvread(strcat(ICC_outputpath, '/perc_ratiokept_lvlalt_glasser.csv'));
+abs_icc_onlycons_lvlalt_glasser=csvread(strcat(ICC_outputpath, '/abs_icc_onlycons_lvlalt_glasser.csv'));
+perc_icc_onlycons_lvlalt_glasser=csvread(strcat(ICC_outputpath, '/perc_icc_onlycons_lvlalt_glasser.csv'));
+
+
+subplot(3, 2, 3)
+p3=plot(thresholds(1:18), abs_ratiokept_lvlalt_glasser(1:18,1:6), 'LineWidth',2)
+%legend(names)
+title(strcat('Absolute threshold (Glasser)'))
+%legend(names, 'Location', 'eastoutside')
+ylabel('Proportion of edges')
+
+subplot(3, 2, 4)
+p4=plot(thresholds(1:18), perc_ratiokept_lvlalt_glasser(1:18,1:6), 'LineWidth',2)
+%legend(names, 'Location', 'eastoutside')
+title(strcat('Relative threshold (Glasser)'))
+xlabel('Top proportion retained')
+ylabel('Proportion of edges')
+
+% Gordon
+
+abs_ratiokept_lvlalt_gordon=csvread(strcat(ICC_outputpath, '/abs_ratiokept_lvlalt_gordon.csv'));
+perc_ratiokept_lvlalt_gordon=csvread(strcat(ICC_outputpath, '/perc_ratiokept_lvlalt_gordon.csv'));
+abs_icc_onlycons_lvlalt_gordon=csvread(strcat(ICC_outputpath, '/abs_icc_onlycons_lvlalt_gordon.csv'));
+perc_icc_onlycons_lvlalt_gordon=csvread(strcat(ICC_outputpath, '/perc_icc_onlycons_lvlalt_gordon.csv'));
+
+
+subplot(3, 2, 5)
+p5=plot(thresholds(1:18), abs_ratiokept_lvlalt_gordon(1:18,1:6), 'LineWidth',2)
+%legend(names, 'Location', 'eastoutside')
+title(strcat('Absolute threshold (Gordon)'))
+xlabel('r value')
+ylabel('Proportion of edges')
+
+subplot(3, 2, 6)
+p6=plot(thresholds(1:18), perc_ratiokept_lvlalt_gordon(1:18,1:6), 'LineWidth',2)
+%legend(names, 'Location', 'eastoutside')
+title(strcat('Relative threshold (Gordon)'))
+xlabel('Top proportion retained')
+ylabel('Proportion of edges')
+
+% Adding overall legend
+fig = gcf;
+fig.Position(3) = fig.Position(3) + 250;
+Lgnd = legend(names);
+Lgnd.Position(1) = 0.01;
+Lgnd.Position(2) = 0.4;
+
+sgtitle('Influence of thresholding on consistency of edges retained')
+
+
+%%%%% Plotting effects of thresholding on ICC of consistent edges alternative threshold
+
+figure('Position', [10 10 800 1000])
+
+subplot(3, 2, 1)
+plot(thresholds(1:18), abs_icc_onlycons_lvlalt_BNT(1:18,1:6), 'LineWidth',2)
+title(strcat('Absolute threshold (Brainnetome)'))
+xlabel('r value')
+ylabel('Proportion of edges')
+
+subplot(3, 2, 2)
+plot(thresholds(1:18), perc_icc_onlycons_lvlalt_BNT(1:18,1:6), 'LineWidth',2)
+title(strcat('Relative threshold (Brainnetome)'))
+xlabel('Top proportion retained')
+ylabel('Proportion of edges')
+
+subplot(3, 2, 3)
+plot(thresholds(1:18), abs_icc_onlycons_lvlalt_glasser(1:18,1:6), 'LineWidth',2)
+title(strcat('Absolute threshold (Glasser)'))
+xlabel('r value')
+ylabel('Proportion of edges')
+
+subplot(3, 2, 4)
+plot(thresholds(1:18), perc_icc_onlycons_lvlalt_glasser(1:18,1:6), 'LineWidth',2)
+title(strcat('Relative threshold (Glasser)'))
+xlabel('Top proportion retained')
+ylabel('Proportion of edges')
+
+subplot(3, 2, 5)
+plot(thresholds(1:18), abs_icc_onlycons_lvlalt_gordon(1:18,1:6), 'LineWidth',2)
+title(strcat('Absolute threshold (Gordon)'))
+xlabel('r value')
+ylabel('Proportion of edges')
+
+subplot(3, 2, 6)
+plot(thresholds(1:18), perc_icc_onlycons_lvlalt_gordon(1:18,1:6), 'LineWidth',2)
+title(strcat('Relative threshold (Gordon)'))
+xlabel('Top proportion retained')
+ylabel('Proportion of edges')
+
+% Adding overall legend
+fig = gcf;
+fig.Position(3) = fig.Position(3) + 250;
+Lgnd = legend(names);
+Lgnd.Position(1) = 0.01;
+Lgnd.Position(2) = 0.4;
+
+sgtitle('Influence of thresholding on ICC of consistent edges')
+

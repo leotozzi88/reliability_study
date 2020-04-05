@@ -6,14 +6,9 @@ allsubs={'100206' '100307' '100408' '100610' '101006' '101309' '101915' '102008'
 excluded={'102008' '104820' '124220' '140824' '147030' '151223' '151526' '153833' '159138' '161327' '161832' '163331' '171532' '175439' '205220' '223929' '233326' '298051' '311320' '352132' '366446' '392447' '453542' '562345' '748662' '833249' '947668'};
 subs=allsubs(~ismember(allsubs, excluded));
 
-% % Run only on unrelated subjects
-% disp('Running only on unrelated subjects')
-% unrelated={'100307' '100408' '101107' '101309' '101915' '103111' '103414' '103818' '105014' '105115' '106016' '108828' '110411' '111312' '111716' '113619' '113922' '114419' '115320' '116524' '117122' '118528' '118730' '118932' '120111' '122317' '122620' '123117' '123925' '124422' '125525' '126325' '127630' '127933' '128127' '128632' '129028' '130013' '130316' '131217' '131722' '133019' '133928' '135225' '135932' '136833' '138534' '139637' '140925' '144832' '146432' '147737' '148335' '148840' '149337' '149539' '149741' '151223' '151526' '151627' '153025' '154734' '156637' '159340' '160123' '161731' '162733' '163129' '176542' '178950' '188347' '189450' '190031' '192540' '196750' '198451' '199655' '201111' '208226' '211417' '211720' '212318' '214423' '221319' '239944' '245333' '280739' '298051' '366446' '397760' '414229' '499566' '654754' '672756' '751348' '756055' '792564' '856766' '857263' '899885'};
-% subs=subs(ismember(subs, unrelated));
-
-matpath='/Users/leonardotozzi/Desktop/Server_Leo/HCP_HYA_REST_FIX/Connmats'; % path to the matrices
-edges_outputpath='/Users/leonardotozzi/Desktop/Repeatability_study/Edges'; % where edges will be saved
-ICC_outputpath='/Users/leonardotozzi/Desktop/Repeatability_study/ICCs'; % where edges will be saved
+matpath='/Users/ltozzi/Desktop/Connmats'; % path to the matrices
+edges_outputpath='/Users/ltozzi/Desktop/Edges'; % where edges will be saved
+ICC_outputpath='/Users/ltozzi/Desktop/ICCs'; % where edges will be saved
 
 % no gsr
 
@@ -80,13 +75,14 @@ for feat=1:size(t1, 2)
     allicc(feat)=r;
     alllb(feat)=LB;
     allub(feat)=UB;
-    alllp(feat)=p;
+    allp(feat)=p;
     
 end
 
 csvwrite(strcat(ICC_outputpath, '/ICC_RSN_gordon_icc.csv'), allicc)
-csvwrite(strcat(ICC_outputpath, '/ICC_RSN_gordon_ub.csv'), alllb)
-csvwrite(strcat(ICC_outputpath, '/ICC_RSN_gordon_lb.csv'), allub)
+csvwrite(strcat(ICC_outputpath, '/ICC_RSN_gordon_ub.csv'), allub)
+csvwrite(strcat(ICC_outputpath, '/ICC_RSN_gordon_lb.csv'), alllb)
+csvwrite(strcat(ICC_outputpath, '/ICC_RSN_gordon_p.csv'), allp)
 
 %%%%%% GSR
 
@@ -156,16 +152,22 @@ for feat=1:size(t1, 2)
     allicc_gsr(feat)=r;
     alllb_gsr(feat)=LB;
     allub_gsr(feat)=UB;
-    alllp_gsr(feat)=p;
+    allp_gsr(feat)=p;
     
 end
 
 csvwrite(strcat(ICC_outputpath, '/ICC_RSN_gordon_icc_gsr.csv'), allicc_gsr)
-csvwrite(strcat(ICC_outputpath, '/ICC_RSN_gordon_ub_gsr.csv'), alllb_gsr)
-csvwrite(strcat(ICC_outputpath, '/ICC_RSN_gordon_lb_gsr.csv'), allub_gsr)
+csvwrite(strcat(ICC_outputpath, '/ICC_RSN_gordon_ub_gsr.csv'), allub_gsr)
+csvwrite(strcat(ICC_outputpath, '/ICC_RSN_gordon_lb_gsr.csv'), alllb_gsr)
+csvwrite(strcat(ICC_outputpath, '/ICC_RSN_gordon_p_gsr.csv'), allp_gsr)
 
 
 % Create bar plot
+
+allicc=csvread(strcat(ICC_outputpath, '/ICC_RSN_gordon_icc.csv'))
+allicc_gsr=csvread(strcat(ICC_outputpath, '/ICC_RSN_gordon_icc_gsr.csv'))
+allub=csvread(strcat(ICC_outputpath, '/ICC_RSN_gordon_ub.csv'))
+allub_gsr=csvread(strcat(ICC_outputpath, '/ICC_RSN_gordon_ub_gsr.csv'))
 
 ctrs = 1:12;
 data = [allicc' allicc_gsr'];
@@ -185,5 +187,4 @@ hold off
 ylim([0.2 0.9])
 xticklabels({'DMN' 'PAO' 'FP' 'SAL' 'COP' 'MEP' 'DAN' 'VAN' 'VIS' 'SMH' 'SMM' 'AUD'})
 ylabel('ICC of average FC')
-title('Reliability of resting state networks')
 legend({'No GSR' 'GSR'})
