@@ -2,7 +2,7 @@
 
 This is the repository for the study: 
 
-"Short-term stability of the human intrinsic functional connectome"
+"Test-retest reliability of the human functional connectome over consecutive days: identifying highly reliable portions and assessing the impact of methodological choices"
 
 Summary:
 
